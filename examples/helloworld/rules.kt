@@ -7,7 +7,9 @@ data class KotlinLibraryRule(
 )
 
 data class KotlinBinaryRule(
-	val name: String,
+	val name: Foo,
 	val jars: List<String> = listOf<String>(),
 	val deps: List<String> = listOf<String>()
-)
+) {
+	constructor (name:String) : this(Foo(name))
+}

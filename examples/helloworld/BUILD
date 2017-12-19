@@ -27,17 +27,24 @@ java_binary(
     ],
 )
 
+kotlin_library(
+    name = "foo",
+    srcs = ["foo.kt"],
+)
+
 # A simple kotlin rule that defines "data classes"
 kotlin_library(
     name = "rules",
     srcs = ["rules.kt"],
-    java_deps = [":milk"]
+    java_deps = [":milk"],
+    deps = [":foo"],
 )
 
 # A simple java class that defines soy milk
 java_library(
     name = "milk",
     srcs = ["SoyMilk.java"],
+    # UNCOMMENT ME TO SEE Foo in included deps = [":foo_kt"],
 )
 
 # A java rule that depends on a kotlin rule (using kotlin within traditional java)

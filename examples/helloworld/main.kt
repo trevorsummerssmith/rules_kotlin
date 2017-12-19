@@ -8,6 +8,8 @@ annotation class Feature1_2TestAnnotation(val value: Array<String>)
 val boom = "yaay"
 
 fun main(args : Array<String>) {
+	val foo = KotlinBinaryRule("foo")
+	println(foo.name)
 	println(Joiner.on(' ').join(arrayOf("I", "am", "Kotlin!", "......")))
 	println(Joiner.on(' ').join(arrayOf("...", "But", "what", "is", "soy", "milk?")))
 	println(SoyMilk())
