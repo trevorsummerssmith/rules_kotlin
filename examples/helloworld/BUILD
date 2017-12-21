@@ -16,6 +16,24 @@ kotlin_binary(
     ],
 )
 
+kotlin_library(
+    name = "main_kt_lib",
+    srcs = ["main.kt"],
+    deps = [":rules"],
+    java_deps = [":guava", ":milk"],
+)
+
+java_binary(
+    name = "main_kt_java",
+    main_class = "examples.helloworld.MainKt",
+    runtime_deps = [
+        ":main_kt_lib_kt",
+    ],
+    # So we can run it and see the class isn't there
+    # inspecting the jar works too...
+    create_executable = True,
+)
+
 # A java rule that depends on a kotlin rule (using kotlin within traditional java)
 java_binary(
     name = "main_java",
