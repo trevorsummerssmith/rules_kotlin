@@ -15,6 +15,19 @@ _target_types = [_target_type_binary, _target_type_library, _target_type_test]
 # Execution phase
 # ################################################################
 
+KT_JAVA_TARGET_SUFFIX = "_kt"
+
+# Convert relative labels (eg ':foo', 'foo') to absolute
+# Seems like there must be af function for this but I could not find one...
+def _str_to_canonical_label(str):
+    return Label("//" + PACKAGE_NAME).relative(str)
+
+# Convert kotlin target deps into java deps
+def _kotlin_target_dep_to_java_dep(dep):
+    label = _str_to_canonical_label(dep)
+    kotlin_label = "//" + label.package + ":" + label.name + KT_JAVA_TARGET_SUFFIX
+    return kotlin_label
+
 def _kotlin_compile_impl(ctx):
     kt_jar = ctx.outputs.kt_jar
     inputs = []
@@ -258,10 +271,7 @@ def kotlin_android_library(
         **kwargs
     )
 
-    # Convert kotlin deps into java deps
-    kt_deps = []
-    for dep in deps:
-        kt_deps.append(dep + "_kt")
+    kt_deps = [_kotlin_target_dep_to_java_dep(dep) for dep in deps]
 
     native.java_import(
         name = name + "_kt",
@@ -332,10 +342,9 @@ def kotlin_binary(name,
         verbose = verbose,
     )
 
-    runtime_deps = [name + "_kt.jar"] + java_deps + [
-        dep + "_kt"
-        for dep in deps
-    ] + ["@com_github_jetbrains_kotlin//:runtime"]
+    kt_deps = [_kotlin_target_dep_to_java_dep(dep) for dep in deps]
+    runtime_deps = [name + "_kt.jar"] + java_deps + kt_deps \
+                   + ["@com_github_jetbrains_kotlin//:runtime"]
 
     if len(jars):
         native.java_import(
